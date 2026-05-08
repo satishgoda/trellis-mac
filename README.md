@@ -87,6 +87,24 @@ python generate.py photo.png --seed 123 --output my_model --pipeline-type 512
 python generate.py --help
 ```
 
+## Workflow UI
+
+This repo also includes a React + FastAPI workflow console for running the same generation pipeline one stage at a time. The backend keeps the loaded TRELLIS pipeline, conditioning tensors, latents, and decoded mesh in an in-memory session so each step can be inspected before continuing.
+
+```bash
+# Terminal 1: start the Python API
+source .venv/bin/activate
+pip install -e ".[dev]"
+trellis-workflow-api
+
+# Terminal 2: start the React UI
+cd web
+npm install
+npm run dev
+```
+
+Open `http://127.0.0.1:5173`. Generated artifacts are written under `outputs/<session-id>/` and served by the API at `/outputs/...`.
+
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--seed` | 42 | Random seed for generation |
