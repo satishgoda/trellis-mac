@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from trellis_workflow.artifacts import resolve_artifact_path
+from trellis_workflow.exporter import _artifact_for
 from trellis_workflow.models import WorkflowConfig
 from trellis_workflow.workflow import WorkflowError, WorkflowRunner
 
@@ -30,3 +32,19 @@ def test_runner_blocks_out_of_order_steps_before_runtime_imports():
 
     with pytest.raises(WorkflowError, match="Run earlier steps first"):
         runner.start_step(state.session_id, "sample_sparse_structure")
+
+
+def test_artifact_url_is_created_for_non_outputs_directory(tmp_path: Path):
+    artifact_path = tmp_path / "assets" / "dev" / "session-1" / "popeye.glb"
+    artifact_path.parent.mkdir(parents=True)
+    artifact_path.write_bytes(b"glb")
+
+    artifact = _artifact_for(tmp_path, artifact_path, "model")
+
+    assert artifact.path == "assets/dev/session-1/popeye.glb"
+    assert artifact.url == "/api/artifacts/assets/dev/session-1/popeye.glb"
+
+
+def test_artifact_path_resolution_rejects_traversal(tmp_path: Path):
+    with pytest.raises(ValueError, match="outside the project root"):
+        resolve_artifact_path(tmp_path, "../secret.glb")
