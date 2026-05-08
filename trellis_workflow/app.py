@@ -4,8 +4,10 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from .artifacts import resolve_artifact_path
 from .models import WorkflowConfig, WorkflowState
 from .workflow import WorkflowError, WorkflowRunner
 
@@ -34,6 +36,17 @@ def health() -> dict[str, str]:
 @app.get("/api/workflows/default")
 def workflow_definition():
     return runner.get_definition()
+
+
+@app.get("/api/artifacts/{artifact_path:path}")
+def serve_artifact(artifact_path: str) -> FileResponse:
+    try:
+        path = resolve_artifact_path(PROJECT_ROOT, artifact_path)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Artifact not found.") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return FileResponse(path, filename=path.name)
 
 
 @app.post("/api/sessions", response_model=WorkflowState)

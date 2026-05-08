@@ -7,6 +7,7 @@ from typing import Any, Callable
 import numpy as np
 from PIL import Image as PILImage
 
+from .artifacts import artifact_url_for
 from .models import Artifact, WorkflowConfig
 
 LogFn = Callable[[str], None]
@@ -235,17 +236,11 @@ def _export_obj(path: Path, verts: np.ndarray, faces: np.ndarray) -> None:
 
 def _artifact_for(project_root: Path, path: Path, kind: str) -> Artifact:
     relative_path = path.relative_to(project_root)
-    url = None
-    try:
-        output_relative = path.relative_to(project_root / "outputs")
-        url = f"/outputs/{output_relative.as_posix()}"
-    except ValueError:
-        pass
     return Artifact(
         name=path.name,
         kind=kind,  # type: ignore[arg-type]
         path=relative_path.as_posix(),
-        url=url,
+        url=artifact_url_for(project_root, path),
         size_bytes=path.stat().st_size if path.exists() else None,
     )
 
