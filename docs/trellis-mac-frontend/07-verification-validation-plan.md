@@ -168,7 +168,7 @@ Expected results:
 - GLB and OBJ artifacts appear in Artifacts panel.
 - GLB and OBJ artifacts appear in Preview panel and can be selected for in-app rendering.
 - Files exist under `outputs/<session-id>/`.
-- Artifact URLs open through `/outputs/...`.
+- Artifact URLs download through `/api/artifacts/...`.
 
 ### VAL-005: Error Visibility
 

@@ -250,7 +250,19 @@ Success response: HTTP 204 with no body.
 GET /outputs/{session_id}/{filename}
 ```
 
-Serves generated artifacts stored under the server output directory.
+Serves generated artifacts stored under the default `outputs/` directory.
+
+```http
+GET /api/artifacts/{artifact_path}
+```
+
+Serves supported generated artifact files by repository-relative path. This endpoint is used by the UI for preview and download links when users choose output directories such as `outputs/`, `assets/dev/`, or another project-local path.
+
+Rules:
+
+- `artifact_path` must resolve under the project root.
+- Absolute paths and path traversal are rejected.
+- Supported extensions are `.glb`, `.obj`, `.png`, `.jpg`, `.jpeg`, and `.webp`.
 
 ## Data Models
 
@@ -317,7 +329,7 @@ Allowed values:
 | `url` | string or null | API-served URL when available |
 | `size_bytes` | integer or null | File size |
 
-GLB and OBJ artifacts are previewable in the UI when `url` is populated. The previewer loads the same `/outputs/...` URLs exposed by this contract and does not require a separate API endpoint.
+GLB and OBJ artifacts are previewable in the UI when `url` is populated. The previewer loads the same `/api/artifacts/...` URLs exposed by this contract and does not require a separate API endpoint.
 
 ### WorkflowState
 
@@ -363,4 +375,4 @@ GLB and OBJ artifacts are previewable in the UI when `url` is populated. The pre
 | Session creation | `POST /api/sessions` |
 | Poll state | `GET /api/sessions/{session_id}` |
 | Dependency enforcement | Attempt out-of-order step and expect 409 |
-| Artifact serving | Verify `/outputs/...` after export |
+| Artifact serving | Verify `/api/artifacts/...` after export |

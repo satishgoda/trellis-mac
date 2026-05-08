@@ -44,7 +44,7 @@ This matrix links requirements to design elements, implementation areas, verific
 | API-007 | API server design | `POST /api/sessions/{session_id}/run-next` | VAL-003 |
 | API-008 | API server design | `POST /api/sessions/{session_id}/run-all` | VAL-004 |
 | API-009 | API server design | `DELETE /api/sessions/{session_id}` | API contract test candidate |
-| API-010 | Artifact design | `app.mount('/outputs', StaticFiles(...))` | VAL-004 |
+| API-010 | Artifact design | `/api/artifacts/{artifact_path}`, `app.mount('/outputs', StaticFiles(...))` | VAL-004 |
 | UI-001 | UI state model | `App.useEffect` workflow definition load | Browser smoke test |
 | UI-002 | Parameter panel design | `ParameterPanel` | Browser smoke test; UI-AC-001 |
 | UI-003 | Command behavior | `App` command bar | Browser smoke test |

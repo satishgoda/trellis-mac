@@ -116,7 +116,7 @@ This protects runtime consistency. For example, changing a sparse structure requ
 
 ## API Server Design
 
-The server exposes a local development API with CORS restricted to Vite origins. It mounts `/outputs` to serve generated files from the project output directory.
+The server exposes a local development API with CORS restricted to Vite origins. It serves generated artifact files through `/api/artifacts/{artifact_path}` and still mounts `/outputs` for the default output root.
 
 The server owns `WorkflowRunner` as a module-level singleton. This is suitable for local development and one-user operation. Production deployments should replace this with persistent job/session storage and access control.
 
@@ -149,7 +149,7 @@ Artifacts are represented by:
 - `name`: Filename.
 - `kind`: image, model, mesh, texture, or other.
 - `path`: Repository-relative file path.
-- `url`: API-served URL when under `outputs/`.
+- `url`: API-served URL for supported generated artifact file types.
 - `size_bytes`: File size if present.
 
 Relative output directories are scoped by session id: `outputs/<session-id>/<output-name>.*`.

@@ -22,7 +22,7 @@ This runbook defines the operational procedures for starting, verifying, using, 
 | Node | Node.js and npm available on PATH |
 | Backend port | `127.0.0.1:8000` |
 | Frontend port | `127.0.0.1:5173` |
-| Artifact root | `outputs/` |
+| Artifact root | Configured output directory, commonly `outputs/` or `assets/dev/` |
 
 ## Operations Flow
 
