@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { workflowApi } from './api/client';
 import { ArtifactPanel } from './components/ArtifactPanel';
 import { LogPanel } from './components/LogPanel';
+import { ModelPreview } from './components/ModelPreview';
 import { ParameterPanel } from './components/ParameterPanel';
 import { StepDetails } from './components/StepDetails';
 import { StepList } from './components/StepList';
@@ -165,6 +166,7 @@ export default function App() {
           <StepDetails definition={selectedDefinition} state={selectedState} />
         </div>
         <div className="right-column">
+          <ModelPreview artifacts={session?.artifacts ?? []} />
           <ArtifactPanel artifacts={session?.artifacts ?? []} />
           <LogPanel logs={session?.logs ?? []} />
         </div>

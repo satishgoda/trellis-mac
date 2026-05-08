@@ -405,6 +405,82 @@ p {
   display: grid;
 }
 
+.model-preview-panel {
+  overflow: hidden;
+}
+
+.model-preview-heading {
+  align-items: center;
+}
+
+.model-preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.model-select {
+  width: min(240px, 42vw);
+  min-height: 32px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.icon-link {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #c9d3dd;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  background: #ffffff;
+}
+
+.icon-link:hover {
+  border-color: #7b93ad;
+  background: #f8fafc;
+}
+
+.model-viewer {
+  position: relative;
+  height: 360px;
+  min-height: 320px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.model-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.model-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  color: #52606d;
+  font-size: 13px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.model-status-error {
+  color: #902424;
+  background: rgba(255, 241, 241, 0.86);
+}
+
+.model-empty-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .artifact-row {
   display: grid;
   grid-template-columns: 28px 1fr 24px;
@@ -504,6 +580,10 @@ p {
     grid-column: 1 / -1;
     grid-template-columns: minmax(280px, 360px) 1fr;
   }
+
+  .model-preview-panel {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 760px) {
@@ -531,5 +611,14 @@ p {
 
   .log-line p {
     grid-column: 1 / -1;
+  }
+
+  .model-select {
+    width: min(210px, 50vw);
+  }
+
+  .model-viewer {
+    height: 300px;
+    min-height: 280px;
   }
 }
