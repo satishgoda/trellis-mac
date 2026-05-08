@@ -1,0 +1,67 @@
+digraph StepDependencyGraph {
+  graph [
+    label="Workflow Step Dependency Graph",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.55,
+    ranksep=0.95,
+    pad=0.35,
+    bgcolor="#f8fafc"
+  ];
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#334155", penwidth=1.25];
+  edge [fontname="Helvetica", fontsize=9, color="#475569", penwidth=1.2, arrowsize=0.75];
+
+  subgraph cluster_ingest {
+    label="Ingest";
+    style="rounded,filled";
+    color="#60a5fa";
+    fillcolor="#eff6ff";
+    load_pipeline [label="load_pipeline\nmodel + device", fillcolor="#bfdbfe", color="#2563eb"];
+    load_image [label="load_image\nsource image", fillcolor="#dbeafe", color="#3b82f6"];
+    preprocess [label="preprocess_image\nbackground + crop", fillcolor="#dbeafe", color="#3b82f6"];
+  }
+
+  subgraph cluster_conditioning {
+    label="Conditioning";
+    style="rounded,filled";
+    color="#22c55e";
+    fillcolor="#f0fdf4";
+    conditioning [label="build_conditioning\nimage features", fillcolor="#bbf7d0", color="#16a34a"];
+  }
+
+  subgraph cluster_sampling {
+    label="Sampling";
+    style="rounded,filled";
+    color="#f59e0b";
+    fillcolor="#fffbeb";
+    sparse [label="sample_sparse_structure\nvoxel coordinates", fillcolor="#fde68a", color="#d97706"];
+    shape [label="sample_shape_slat\ngeometry latent", fillcolor="#fef3c7", color="#f59e0b"];
+    texture [label="sample_texture_slat\ntexture latent", fillcolor="#fef3c7", color="#f59e0b"];
+  }
+
+  subgraph cluster_output {
+    label="Decode and Export";
+    style="rounded,filled";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+    decode [label="decode_mesh\nmesh extraction", fillcolor="#ddd6fe", color="#7c3aed"];
+    export [label="export_model\nGLB / OBJ / textures", fillcolor="#ede9fe", color="#8b5cf6"];
+  }
+
+  load_pipeline -> conditioning [label="pipeline ready"];
+  load_pipeline -> sparse [label="samplers ready"];
+  load_image -> preprocess [label="PIL image"];
+  preprocess -> conditioning [label="processed image"];
+  conditioning -> sparse [label="condition"];
+  sparse -> shape [label="coords"];
+  conditioning -> shape [label="condition"];
+  shape -> texture [label="shape latent"];
+  conditioning -> texture [label="condition"];
+  shape -> decode [label="geometry"];
+  texture -> decode [label="texture attrs"];
+  decode -> export [label="mesh"];
+}

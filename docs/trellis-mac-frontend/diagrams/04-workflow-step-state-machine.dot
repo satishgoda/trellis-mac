@@ -1,0 +1,60 @@
+digraph WorkflowStepStateMachine {
+  graph [
+    label="Workflow Step State Machine",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.75,
+    ranksep=1.05,
+    pad=0.35,
+    bgcolor="#f8fafc"
+  ];
+
+  node [shape=ellipse, style="filled", fontname="Helvetica-Bold", fontsize=12, color="#334155", penwidth=1.4];
+  edge [fontname="Helvetica", fontsize=10, color="#475569", penwidth=1.3, arrowsize=0.8];
+
+  pending [label="pending", fillcolor="#e2e8f0", color="#64748b"];
+  running [label="running", fillcolor="#dbeafe", color="#2563eb"];
+  completed [label="completed", fillcolor="#dcfce7", color="#16a34a"];
+  skipped [label="skipped", fillcolor="#fef3c7", color="#d97706"];
+  failed [label="failed", fillcolor="#fee2e2", color="#dc2626"];
+
+  subgraph cluster_controls {
+    label="Backend Guards";
+    style="rounded,filled";
+    color="#94a3b8";
+    fillcolor="#f1f5f9";
+    validate [shape=box, label="validate step id\nvalidate dependencies\nvalidate not busy", fillcolor="#f8fafc", color="#64748b"];
+    reset [shape=box, label="reset downstream\nclear derived artifacts", fillcolor="#f8fafc", color="#64748b"];
+  }
+
+  subgraph cluster_outputs {
+    label="Observable Output";
+    style="rounded,filled";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+    logs [shape=box, label="logs\ntimestamps + messages", fillcolor="#ede9fe", color="#7c3aed"];
+    metrics [shape=box, label="summary\nduration + metrics", fillcolor="#ede9fe", color="#7c3aed"];
+    artifacts [shape=box, label="artifacts\nexport_model only", fillcolor="#ddd6fe", color="#8b5cf6"];
+  }
+
+  pending -> validate [label="user requests run"];
+  completed -> validate [label="rerun step"];
+  skipped -> validate [label="rerun step"];
+  failed -> validate [label="retry step"];
+  validate -> reset [label="accepted"];
+  reset -> running [label="submit job"];
+  validate -> pending [label="409 conflict", color="#dc2626", fontcolor="#dc2626"];
+
+  running -> completed [label="handler success"];
+  running -> skipped [label="handler skip"];
+  running -> failed [label="exception"];
+
+  running -> logs [label="stdout/stderr capture"];
+  completed -> metrics [label="outcome"];
+  skipped -> metrics [label="reason"];
+  failed -> logs [label="error"];
+  completed -> artifacts [label="export complete", color="#7c3aed"];
+}

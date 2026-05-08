@@ -1,0 +1,79 @@
+digraph OperationsDeploymentFlow {
+  graph [
+    label="Local Operations and Deployment Flow",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.65,
+    ranksep=1.05,
+    pad=0.35,
+    bgcolor="#f8fafc",
+    compound=true
+  ];
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#334155", penwidth=1.25];
+  edge [fontname="Helvetica", fontsize=9, color="#475569", penwidth=1.25, arrowsize=0.75];
+
+  subgraph cluster_setup {
+    label="Setup Baseline";
+    style="rounded,filled";
+    color="#60a5fa";
+    fillcolor="#eff6ff";
+
+    clone [label="repo checkout\ntrellis-mac", fillcolor="#dbeafe", color="#2563eb"];
+    venv [label="Python virtualenv\.venv", fillcolor="#bfdbfe", color="#2563eb"];
+    pip [label="pip install -e .[dev]", fillcolor="#dbeafe", color="#2563eb"];
+    npm [label="npm install\nweb dependencies", fillcolor="#dbeafe", color="#2563eb"];
+  }
+
+  subgraph cluster_startup {
+    label="Startup";
+    style="rounded,filled";
+    color="#22c55e";
+    fillcolor="#f0fdf4";
+
+    api [label="trellis-workflow-api\nor uvicorn", fillcolor="#bbf7d0", color="#16a34a"];
+    vite [label="npm run dev\n--host 127.0.0.1", fillcolor="#dcfce7", color="#22c55e"];
+    proxy [label="Vite proxy\n/api + /outputs", fillcolor="#dcfce7", color="#22c55e"];
+  }
+
+  subgraph cluster_validation {
+    label="Operational Validation";
+    style="rounded,filled";
+    color="#f59e0b";
+    fillcolor="#fffbeb";
+
+    health [label="GET /api/health", fillcolor="#fde68a", color="#d97706"];
+    definition [label="load workflow definition", fillcolor="#fef3c7", color="#f59e0b"];
+    smoke [label="create session smoke test", fillcolor="#fef3c7", color="#f59e0b"];
+    browser [label="open UI\nhttp://127.0.0.1:5173", fillcolor="#ffedd5", color="#ea580c"];
+  }
+
+  subgraph cluster_runtime {
+    label="Runtime Controls";
+    style="rounded,filled";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+
+    logs [label="terminal logs\nserver + Vite", fillcolor="#ede9fe", color="#7c3aed"];
+    outputs [label="outputs/\ngenerated artifacts", fillcolor="#ddd6fe", color="#8b5cf6"];
+    cleanup [label="delete sessions\nclear generated files as needed", fillcolor="#ede9fe", color="#7c3aed"];
+  }
+
+  clone -> venv;
+  venv -> pip;
+  clone -> npm;
+  pip -> api;
+  npm -> vite;
+  api -> health [label="confirm server"];
+  vite -> proxy;
+  proxy -> definition;
+  definition -> smoke;
+  smoke -> browser;
+  api -> logs [label="observe errors"];
+  vite -> logs [label="observe build/runtime errors"];
+  browser -> outputs [label="step execution creates artifacts"];
+  outputs -> cleanup [label="retention action"];
+}

@@ -1,0 +1,88 @@
+digraph ApiSessionFlow {
+  graph [
+    label="API Session and Step Execution Flow",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.6,
+    ranksep=1.05,
+    pad=0.35,
+    bgcolor="#f8fafc",
+    compound=true
+  ];
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#334155", penwidth=1.25];
+  edge [fontname="Helvetica", fontsize=9, color="#475569", penwidth=1.25, arrowsize=0.75];
+
+  subgraph cluster_client {
+    label="React Client";
+    style="rounded,filled";
+    color="#60a5fa";
+    fillcolor="#eff6ff";
+    ui [label="UI command\nCreate / Run / Poll", fillcolor="#bfdbfe", color="#2563eb"];
+  }
+
+  subgraph cluster_routes {
+    label="FastAPI Routes";
+    style="rounded,filled";
+    color="#2dd4bf";
+    fillcolor="#f0fdfa";
+    health [label="GET /api/health", fillcolor="#ccfbf1", color="#0f766e"];
+    definition [label="GET /api/workflows/default", fillcolor="#ccfbf1", color="#0f766e"];
+    create [label="POST /api/sessions", fillcolor="#99f6e4", color="#0d9488"];
+    get [label="GET /api/sessions/{id}", fillcolor="#ccfbf1", color="#0f766e"];
+    runstep [label="POST /api/sessions/{id}/steps/{step}/run", fillcolor="#99f6e4", color="#0d9488"];
+    runnext [label="POST /api/sessions/{id}/run-next", fillcolor="#99f6e4", color="#0d9488"];
+    runall [label="POST /api/sessions/{id}/run-all", fillcolor="#99f6e4", color="#0d9488"];
+  }
+
+  subgraph cluster_runner {
+    label="WorkflowRunner";
+    style="rounded,filled";
+    color="#22c55e";
+    fillcolor="#f0fdf4";
+    normalize [label="normalize config", fillcolor="#dcfce7", color="#16a34a"];
+    record [label="SessionRecord\nWorkflowState + RuntimeContext", fillcolor="#bbf7d0", color="#16a34a"];
+    validate [label="validate busy state\nvalidate dependencies", fillcolor="#dcfce7", color="#16a34a"];
+    enqueue [label="submit background job", fillcolor="#bbf7d0", color="#16a34a"];
+    execute [label="execute step handler\ncapture stdout/stderr", fillcolor="#86efac", color="#15803d"];
+    update [label="update StepState\nlogs + artifacts", fillcolor="#dcfce7", color="#16a34a"];
+  }
+
+  subgraph cluster_runtime {
+    label="TRELLIS Runtime";
+    style="rounded,filled";
+    color="#f59e0b";
+    fillcolor="#fffbeb";
+    handler [label="step handler\nload / sample / decode / export", fillcolor="#fde68a", color="#d97706"];
+    artifacts [label="outputs/<session-id>/", fillcolor="#fef3c7", color="#f59e0b"];
+  }
+
+  ui -> definition [label="initial load"];
+  definition -> ui [label="steps + parameters"];
+  ui -> create [label="WorkflowConfig"];
+  create -> normalize;
+  normalize -> record [label="new session id"];
+  record -> ui [label="WorkflowState"];
+
+  ui -> runnext [label="run next"];
+  ui -> runstep [label="run exact step"];
+  ui -> runall [label="run remaining"];
+  runnext -> validate;
+  runstep -> validate;
+  runall -> validate;
+  validate -> enqueue [label="accepted"];
+  validate -> ui [label="409 conflict", color="#dc2626", fontcolor="#dc2626"];
+  enqueue -> execute;
+  execute -> handler;
+  handler -> artifacts [label="export step"];
+  handler -> update [label="outcome"];
+  artifacts -> update [label="Artifact metadata"];
+  update -> record;
+  ui -> get [label="poll while busy"];
+  get -> record;
+  record -> ui [label="current state"];
+  health -> ui [label="status ok"];
+}

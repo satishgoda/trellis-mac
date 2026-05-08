@@ -1,0 +1,84 @@
+digraph QualityGateTraceability {
+  graph [
+    label="Quality Gates and Requirements Traceability",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.6,
+    ranksep=1.0,
+    pad=0.35,
+    bgcolor="#f8fafc",
+    compound=true
+  ];
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#334155", penwidth=1.25];
+  edge [fontname="Helvetica", fontsize=9, color="#475569", penwidth=1.25, arrowsize=0.75];
+
+  subgraph cluster_requirements {
+    label="Requirements";
+    style="rounded,filled";
+    color="#38bdf8";
+    fillcolor="#f0f9ff";
+
+    req_ui [label="REQ-UI\nconfigure pipeline controls", fillcolor="#bae6fd", color="#0284c7"];
+    req_step [label="REQ-STEP\nexecute one step at a time", fillcolor="#e0f2fe", color="#0ea5e9"];
+    req_log [label="REQ-LOG\npresent technical logs", fillcolor="#e0f2fe", color="#0ea5e9"];
+    req_art [label="REQ-ART\nexpose output artifacts", fillcolor="#bae6fd", color="#0284c7"];
+  }
+
+  subgraph cluster_design {
+    label="Design Elements";
+    style="rounded,filled";
+    color="#22c55e";
+    fillcolor="#f0fdf4";
+
+    params [label="ParameterPanel\nmetadata-driven inputs", fillcolor="#bbf7d0", color="#16a34a"];
+    runner [label="WorkflowRunner\ndependency guards", fillcolor="#dcfce7", color="#22c55e"];
+    logcapture [label="LogCapture\nstdout/stderr routing", fillcolor="#dcfce7", color="#22c55e"];
+    artifact [label="ArtifactPanel\n/output links", fillcolor="#bbf7d0", color="#16a34a"];
+  }
+
+  subgraph cluster_tests {
+    label="Verification Evidence";
+    style="rounded,filled";
+    color="#f59e0b";
+    fillcolor="#fffbeb";
+
+    pytest [label="pytest tests\nbackend contract", fillcolor="#fde68a", color="#d97706"];
+    vitest [label="Vitest\nfrontend helpers", fillcolor="#fef3c7", color="#f59e0b"];
+    build [label="npm run build\nTypeScript + Vite", fillcolor="#fef3c7", color="#f59e0b"];
+    smoke [label="API/browser smoke\nsession creation", fillcolor="#ffedd5", color="#ea580c"];
+  }
+
+  subgraph cluster_governance {
+    label="CMM/CMMI Level 3 Evidence";
+    style="rounded,filled";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+
+    trace [label="Traceability Matrix", fillcolor="#ddd6fe", color="#7c3aed"];
+    risk [label="Risk / Security / Quality Plan", fillcolor="#ede9fe", color="#8b5cf6"];
+    change [label="Configuration and Change Management", fillcolor="#ede9fe", color="#8b5cf6"];
+    vv [label="Verification and Validation Plan", fillcolor="#ddd6fe", color="#7c3aed"];
+  }
+
+  req_ui -> params [label="implemented by"];
+  req_step -> runner [label="implemented by"];
+  req_log -> logcapture [label="implemented by"];
+  req_art -> artifact [label="implemented by"];
+
+  params -> vitest [label="helper coverage"];
+  runner -> pytest [label="contract coverage"];
+  logcapture -> smoke [label="runtime observation"];
+  artifact -> build [label="type + bundle validation"];
+  artifact -> smoke [label="URL behavior"];
+
+  pytest -> trace [label="evidence"];
+  vitest -> trace [label="evidence"];
+  build -> vv [label="quality gate"];
+  smoke -> vv [label="validation gate"];
+  trace -> risk [label="control mapping"];
+  vv -> change [label="release baseline"];
+}

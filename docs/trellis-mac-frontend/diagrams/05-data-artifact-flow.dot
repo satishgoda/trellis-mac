@@ -1,0 +1,85 @@
+digraph DataArtifactFlow {
+  graph [
+    label="TRELLIS Data and Artifact Flow",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.65,
+    ranksep=1.05,
+    pad=0.35,
+    bgcolor="#f8fafc",
+    compound=true
+  ];
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#334155", penwidth=1.25];
+  edge [fontname="Helvetica", fontsize=9, color="#475569", penwidth=1.25, arrowsize=0.75];
+
+  input [label="Input image path\nWorkflowConfig.image_path", fillcolor="#dbeafe", color="#2563eb"];
+
+  subgraph cluster_preprocess {
+    label="Image Preparation";
+    style="rounded,filled";
+    color="#38bdf8";
+    fillcolor="#f0f9ff";
+    raw [label="raw PIL image", fillcolor="#bae6fd", color="#0284c7"];
+    pre [label="preprocessed image\noptional background removal + crop", fillcolor="#e0f2fe", color="#0ea5e9"];
+    preview [label="preprocessed.png", fillcolor="#dbeafe", color="#2563eb"];
+  }
+
+  subgraph cluster_latents {
+    label="Runtime Tensors";
+    style="rounded,filled";
+    color="#22c55e";
+    fillcolor="#f0fdf4";
+    cond [label="conditioning tensors\n512 and optional 1024", fillcolor="#bbf7d0", color="#16a34a"];
+    coords [label="sparse structure coords", fillcolor="#dcfce7", color="#22c55e"];
+    shape [label="shape SLat", fillcolor="#dcfce7", color="#22c55e"];
+    texture [label="texture SLat", fillcolor="#dcfce7", color="#22c55e"];
+    mesh [label="MeshWithVoxel\nvertices + faces + attrs", fillcolor="#86efac", color="#15803d"];
+  }
+
+  subgraph cluster_export {
+    label="Export";
+    style="rounded,filled";
+    color="#f59e0b";
+    fillcolor="#fffbeb";
+    simplify [label="optional simplification\ndecimation target", fillcolor="#fde68a", color="#d97706"];
+    bake [label="texture bake\nmetal / kdtree / none", fillcolor="#fef3c7", color="#f59e0b"];
+    glb [label="<output>.glb", fillcolor="#ffedd5", color="#ea580c"];
+    obj [label="<output>.obj", fillcolor="#ffedd5", color="#ea580c"];
+    texturepng [label="<output>_basecolor.png\nwhen generated", fillcolor="#fed7aa", color="#f97316"];
+  }
+
+  subgraph cluster_ui {
+    label="UI Presentation";
+    style="rounded,filled";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+    state [label="WorkflowState JSON", fillcolor="#ede9fe", color="#7c3aed"];
+    artifactpanel [label="ArtifactPanel\nlinks + sizes", fillcolor="#ddd6fe", color="#8b5cf6"];
+    logpanel [label="LogPanel\nstep output", fillcolor="#ede9fe", color="#7c3aed"];
+  }
+
+  input -> raw [label="load_image"];
+  raw -> pre [label="preprocess_image"];
+  pre -> preview [label="save preview"];
+  pre -> cond [label="build_conditioning"];
+  cond -> coords [label="sample_sparse_structure"];
+  coords -> shape [label="sample_shape_slat"];
+  shape -> texture [label="sample_texture_slat"];
+  shape -> mesh [label="decode_mesh"];
+  texture -> mesh [label="decode texture attrs"];
+  mesh -> simplify [label="export_model"];
+  simplify -> bake;
+  bake -> glb;
+  mesh -> obj;
+  bake -> texturepng [label="kdtree texture path"];
+  preview -> state [label="Artifact"];
+  glb -> state [label="Artifact"];
+  obj -> state [label="Artifact"];
+  texturepng -> state [label="Artifact"];
+  state -> artifactpanel;
+  state -> logpanel [label="logs"];
+}

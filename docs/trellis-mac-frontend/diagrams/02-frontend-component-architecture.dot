@@ -1,0 +1,81 @@
+digraph FrontendComponentArchitecture {
+  graph [
+    label="React Frontend Component Architecture",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=TB,
+    splines=polyline,
+    nodesep=0.55,
+    ranksep=0.85,
+    pad=0.35,
+    bgcolor="#f8fafc",
+    compound=true
+  ];
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, color="#334155", penwidth=1.3];
+  edge [fontname="Helvetica", fontsize=10, color="#475569", penwidth=1.25, arrowsize=0.75];
+
+  subgraph cluster_shell {
+    label="App Shell";
+    style="rounded,filled";
+    color="#38bdf8";
+    fillcolor="#f0f9ff";
+
+    app [label="App.tsx\nstate orchestration", fillcolor="#bae6fd", color="#0284c7"];
+    topbar [label="Topbar\nsession chip", fillcolor="#e0f2fe", color="#0ea5e9"];
+    commandbar [label="Command Bar\ncreate / run / reset", fillcolor="#e0f2fe", color="#0ea5e9"];
+  }
+
+  subgraph cluster_data {
+    label="Data and API";
+    style="rounded,filled";
+    color="#22c55e";
+    fillcolor="#f0fdf4";
+
+    api [label="workflowApi\nfetch wrapper", fillcolor="#bbf7d0", color="#16a34a"];
+    types [label="types.ts\nWorkflowConfig / State", fillcolor="#dcfce7", color="#22c55e"];
+    helpers [label="workflow.ts\ndefaults + formatters", fillcolor="#dcfce7", color="#22c55e"];
+  }
+
+  subgraph cluster_panels {
+    label="Workspace Panels";
+    style="rounded,filled";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+
+    params [label="ParameterPanel\nmetadata-driven controls", fillcolor="#ddd6fe", color="#7c3aed"];
+    steps [label="StepList\nstep status + run buttons", fillcolor="#ede9fe", color="#8b5cf6"];
+    details [label="StepDetails\nmetrics + error display", fillcolor="#ede9fe", color="#8b5cf6"];
+    artifacts [label="ArtifactPanel\nfile links + sizes", fillcolor="#ede9fe", color="#8b5cf6"];
+    logs [label="LogPanel\ntechnical log stream", fillcolor="#ede9fe", color="#8b5cf6"];
+  }
+
+  subgraph cluster_backend {
+    label="Backend API";
+    style="rounded,filled";
+    color="#fb923c";
+    fillcolor="#fff7ed";
+
+    server [label="FastAPI\n/api/workflows + /api/sessions", fillcolor="#fed7aa", color="#ea580c"];
+    outputs [label="Static /outputs\ngenerated artifacts", fillcolor="#ffedd5", color="#f97316"];
+  }
+
+  app -> topbar [label="session id"];
+  app -> commandbar [label="busy + next step"];
+  app -> params [label="definition + config"];
+  app -> steps [label="steps + selected id"];
+  app -> details [label="selected step"];
+  app -> artifacts [label="artifacts"];
+  app -> logs [label="logs"];
+
+  app -> api [label="load definition\ncreate session\nrun commands\npoll state", color="#16a34a"];
+  api -> server [label="HTTP JSON", color="#16a34a"];
+  server -> api [label="WorkflowState", color="#16a34a"];
+  artifacts -> outputs [label="open artifact URL", color="#f97316"];
+
+  types -> app [label="typed state"];
+  helpers -> app [label="defaults"];
+  helpers -> steps [label="labels + durations"];
+  helpers -> artifacts [label="byte formatting"];
+}

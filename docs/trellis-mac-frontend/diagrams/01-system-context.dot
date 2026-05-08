@@ -1,0 +1,94 @@
+digraph TrellisWorkflowSystemContext {
+  graph [
+    label="TRELLIS Workflow System Context",
+    labelloc=t,
+    fontsize=24,
+    fontname="Helvetica-Bold",
+    rankdir=LR,
+    splines=polyline,
+    nodesep=0.75,
+    ranksep=1.15,
+    pad=0.35,
+    bgcolor="#f8fafc",
+    outputorder=edgesfirst
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Helvetica",
+    fontsize=12,
+    margin="0.12,0.08",
+    color="#334155",
+    penwidth=1.4
+  ];
+
+  edge [
+    fontname="Helvetica",
+    fontsize=10,
+    color="#475569",
+    penwidth=1.35,
+    arrowsize=0.8
+  ];
+
+  user [label="User\nML / graphics operator", fillcolor="#dbeafe", color="#2563eb"];
+
+  subgraph cluster_browser {
+    label="Browser Client";
+    color="#60a5fa";
+    fillcolor="#eff6ff";
+    style="rounded,filled";
+    penwidth=1.8;
+
+    react [label="React Workflow UI\nVite app on :5173", fillcolor="#bfdbfe", color="#2563eb"];
+    panels [label="Parameter, Step, Log,\nArtifact Panels", fillcolor="#dbeafe", color="#3b82f6"];
+  }
+
+  subgraph cluster_api {
+    label="Python API Server";
+    color="#34d399";
+    fillcolor="#ecfdf5";
+    style="rounded,filled";
+    penwidth=1.8;
+
+    fastapi [label="FastAPI App\n/api + /outputs", fillcolor="#bbf7d0", color="#059669"];
+    runner [label="WorkflowRunner\nstate + execution control", fillcolor="#dcfce7", color="#16a34a"];
+    context [label="RuntimeContext\nnon-serializable tensors", fillcolor="#d1fae5", color="#10b981"];
+  }
+
+  subgraph cluster_trellis {
+    label="TRELLIS Runtime";
+    color="#f59e0b";
+    fillcolor="#fffbeb";
+    style="rounded,filled";
+    penwidth=1.8;
+
+    pipeline [label="TRELLIS.2 Pipeline\nmodel load + sampling", fillcolor="#fde68a", color="#d97706"];
+    exporter [label="Exporter\nGLB / OBJ / texture bake", fillcolor="#fef3c7", color="#f59e0b"];
+  }
+
+  subgraph cluster_storage {
+    label="Local File System";
+    color="#a78bfa";
+    fillcolor="#f5f3ff";
+    style="rounded,filled";
+    penwidth=1.8;
+
+    images [label="Input Images\nassets/*.png or path", fillcolor="#ede9fe", color="#7c3aed"];
+    outputs [label="Generated Artifacts\noutputs/<session-id>/", fillcolor="#ddd6fe", color="#8b5cf6"];
+  }
+
+  user -> react [label="configure + run steps"];
+  react -> panels [label="render state"];
+  react -> fastapi [label="HTTP JSON\n/api requests", color="#2563eb"];
+  fastapi -> react [label="WorkflowState\nlogs + artifacts", color="#2563eb"];
+  fastapi -> runner [label="route commands"];
+  runner -> context [label="store session runtime"];
+  runner -> pipeline [label="invoke step handlers", color="#d97706"];
+  pipeline -> context [label="pipeline, tensors, mesh"];
+  runner -> exporter [label="export_model step", color="#f59e0b"];
+  images -> runner [label="load_image"];
+  exporter -> outputs [label="write GLB / OBJ / PNG", color="#7c3aed"];
+  outputs -> fastapi [label="StaticFiles /outputs"];
+  fastapi -> react [label="artifact URLs", color="#7c3aed"];
+}
