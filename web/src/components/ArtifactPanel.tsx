@@ -18,20 +18,35 @@ export function ArtifactPanel({ artifacts }: Props) {
         <div className="empty-state">Generated files will appear here.</div>
       ) : (
         <div className="artifact-list">
-          {artifacts.map((artifact) => (
-            <a key={artifact.path} href={artifact.url ?? '#'} className="artifact-row" target="_blank" rel="noreferrer">
-              <span className="artifact-icon" aria-hidden="true">
-                {artifact.kind === 'image' || artifact.kind === 'texture' ? <ImageIcon size={18} /> : <FileBox size={18} />}
-              </span>
-              <span>
-                <strong>{artifact.name}</strong>
-                <small>{artifact.path} - {formatBytes(artifact.size_bytes)}</small>
-              </span>
-              <Download size={16} />
-            </a>
-          ))}
+          {artifacts.map((artifact) => {
+            const content = <ArtifactRowContent artifact={artifact} />;
+            return artifact.url ? (
+              <a key={artifact.path} href={artifact.url} className="artifact-row" download={artifact.name}>
+                {content}
+              </a>
+            ) : (
+              <div key={artifact.path} className="artifact-row artifact-row-disabled" aria-disabled="true">
+                {content}
+              </div>
+            );
+          })}
         </div>
       )}
     </section>
+  );
+}
+
+function ArtifactRowContent({ artifact }: { artifact: Artifact }) {
+  return (
+    <>
+      <span className="artifact-icon" aria-hidden="true">
+        {artifact.kind === 'image' || artifact.kind === 'texture' ? <ImageIcon size={18} /> : <FileBox size={18} />}
+      </span>
+      <span>
+        <strong>{artifact.name}</strong>
+        <small>{artifact.path} - {formatBytes(artifact.size_bytes)}</small>
+      </span>
+      <Download size={16} />
+    </>
   );
 }

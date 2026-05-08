@@ -1,4 +1,4 @@
-import { Box, ExternalLink } from 'lucide-react';
+import { Box, Download } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -155,12 +155,11 @@ export function ModelPreview({ artifacts }: Props) {
             <a
               className="icon-link"
               href={selectedArtifact.url}
-              target="_blank"
-              rel="noreferrer"
-              title="Open model artifact"
-              aria-label={`Open ${selectedArtifact.name}`}
+              download={selectedArtifact.name}
+              title="Download model artifact"
+              aria-label={`Download ${selectedArtifact.name}`}
             >
-              <ExternalLink size={16} />
+              <Download size={16} />
             </a>
           </div>
         ) : (
