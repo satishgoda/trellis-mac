@@ -317,6 +317,8 @@ Allowed values:
 | `url` | string or null | API-served URL when available |
 | `size_bytes` | integer or null | File size |
 
+GLB and OBJ artifacts are previewable in the UI when `url` is populated. The previewer loads the same `/outputs/...` URLs exposed by this contract and does not require a separate API endpoint.
+
 ### WorkflowState
 
 | Field | Type | Notes |

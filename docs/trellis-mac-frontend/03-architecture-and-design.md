@@ -38,6 +38,7 @@ The system uses a client/server architecture:
 | Parameter panel | `web/src/components/ParameterPanel.tsx` | Renders grouped workflow parameter controls |
 | Step list | `web/src/components/StepList.tsx` | Renders ordered pipeline steps and per-step run controls |
 | Step details | `web/src/components/StepDetails.tsx` | Renders selected step description, status, metrics, and errors |
+| Model preview | `web/src/components/ModelPreview.tsx` | Renders served GLB/OBJ artifacts with Three.js, orbit controls, lighting, and fit-to-model framing |
 | Log panel | `web/src/components/LogPanel.tsx` | Renders captured server logs |
 | Artifact panel | `web/src/components/ArtifactPanel.tsx` | Renders generated artifact links |
 | FastAPI app | `trellis_workflow/app.py` | HTTP routes, CORS, static artifact serving |
@@ -61,6 +62,7 @@ The system uses a client/server architecture:
 8. Step handler updates runtime context and emits logs.
 9. UI polls `GET /api/sessions/{session_id}` while busy.
 10. Export step writes artifacts and returns artifact metadata.
+11. UI previews served GLB/OBJ artifacts directly from `/outputs/...` when available.
 
 ## Session State Design
 
@@ -124,7 +126,7 @@ The UI is organized into three work zones:
 
 - Left column: workflow parameters grouped by pipeline step.
 - Middle column: ordered pipeline steps and selected step details.
-- Right column: generated artifacts and live logs.
+- Right column: model preview, generated artifacts, and live logs.
 
 The UI uses typed API responses and does not hard-code step definitions. It depends on the backend workflow definition for step and parameter metadata, which keeps the UI aligned with server behavior.
 
@@ -152,6 +154,8 @@ Artifacts are represented by:
 
 Relative output directories are scoped by session id: `outputs/<session-id>/<output-name>.*`.
 
+GLB and OBJ artifacts with an API-served `url` are previewable in `ModelPreview`. The preview uses Three.js loaders, orbit controls, automatic camera framing, and a neutral material fallback for OBJ files that do not carry material or texture data.
+
 ## Maintainability Design Decisions
 
 | Decision | Rationale |
@@ -178,7 +182,7 @@ Relative output directories are scoped by session id: `outputs/<session-id>/<out
 - Add cancel/retry controls with cooperative step cancellation.
 - Add server-sent events for live log streaming.
 - Add user authentication for shared environments.
-- Add browser-side GLB preview after export.
+- Add model inspection tools such as wireframe toggle, screenshots, and bounding-box measurements.
 - Add upload endpoint for image files instead of path-only input.
 
 ## Design Review Checklist

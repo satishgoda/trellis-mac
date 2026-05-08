@@ -58,8 +58,8 @@ npm run test
 Expected result:
 
 ```text
-Test Files  1 passed
-Tests       3 passed
+Test Files  2 passed
+Tests       5 passed
 ```
 
 ### Frontend Build Verification
@@ -166,6 +166,7 @@ Expected results:
 
 - Each step completes or the workflow stops on a documented failure.
 - GLB and OBJ artifacts appear in Artifacts panel.
+- GLB and OBJ artifacts appear in Preview panel and can be selected for in-app rendering.
 - Files exist under `outputs/<session-id>/`.
 - Artifact URLs open through `/outputs/...`.
 
@@ -232,6 +233,7 @@ Regression testing is required when any of the following changes occur:
 - Workflow step order or parameter metadata changes.
 - Runtime execution logic changes.
 - Artifact output path or serving behavior changes.
+- Model preview format support or Three.js loading behavior changes.
 - Frontend command enablement rules change.
 - Dependency versions change.
 

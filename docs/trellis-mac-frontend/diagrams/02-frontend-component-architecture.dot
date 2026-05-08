@@ -36,6 +36,7 @@ digraph FrontendComponentArchitecture {
     api [label="workflowApi\nfetch wrapper", fillcolor="#bbf7d0", color="#16a34a"];
     types [label="types.ts\nWorkflowConfig / State", fillcolor="#dcfce7", color="#22c55e"];
     helpers [label="workflow.ts\ndefaults + formatters", fillcolor="#dcfce7", color="#22c55e"];
+    artifact_helpers [label="artifacts.ts\npreviewable model filtering", fillcolor="#dcfce7", color="#22c55e"];
   }
 
   subgraph cluster_panels {
@@ -47,6 +48,7 @@ digraph FrontendComponentArchitecture {
     params [label="ParameterPanel\nmetadata-driven controls", fillcolor="#ddd6fe", color="#7c3aed"];
     steps [label="StepList\nstep status + run buttons", fillcolor="#ede9fe", color="#8b5cf6"];
     details [label="StepDetails\nmetrics + error display", fillcolor="#ede9fe", color="#8b5cf6"];
+    preview [label="ModelPreview\nGLB / OBJ in-app viewer", fillcolor="#ddd6fe", color="#7c3aed"];
     artifacts [label="ArtifactPanel\nfile links + sizes", fillcolor="#ede9fe", color="#8b5cf6"];
     logs [label="LogPanel\ntechnical log stream", fillcolor="#ede9fe", color="#8b5cf6"];
   }
@@ -66,16 +68,19 @@ digraph FrontendComponentArchitecture {
   app -> params [label="definition + config"];
   app -> steps [label="steps + selected id"];
   app -> details [label="selected step"];
+  app -> preview [label="model artifacts"];
   app -> artifacts [label="artifacts"];
   app -> logs [label="logs"];
 
   app -> api [label="load definition\ncreate session\nrun commands\npoll state", color="#16a34a"];
   api -> server [label="HTTP JSON", color="#16a34a"];
   server -> api [label="WorkflowState", color="#16a34a"];
+  preview -> outputs [label="load GLB / OBJ", color="#f97316"];
   artifacts -> outputs [label="open artifact URL", color="#f97316"];
 
   types -> app [label="typed state"];
   helpers -> app [label="defaults"];
   helpers -> steps [label="labels + durations"];
   helpers -> artifacts [label="byte formatting"];
+  artifact_helpers -> preview [label="supported artifacts"];
 }

@@ -21,6 +21,7 @@ This document defines the React user interface behavior for the TRELLIS Workflow
 | Build tool | Vite |
 | Language | TypeScript strict mode |
 | Icons | `lucide-react` |
+| 3D preview | Three.js with GLTFLoader, OBJLoader, and OrbitControls |
 | Tests | Vitest with jsdom |
 | Styling | Project CSS in `web/src/styles.css` |
 | API integration | Fetch wrapper in `web/src/api/client.ts` |
@@ -31,7 +32,7 @@ The current UI is a single-page workflow console.
 
 | Page/View | Route | Purpose |
 |---|---|---|
-| Workflow Console | `/` | Configure parameters, create session, run steps, inspect logs and artifacts |
+| Workflow Console | `/` | Configure parameters, create session, run steps, preview model artifacts, inspect logs and artifacts |
 
 ## Primary Layout
 
@@ -51,7 +52,7 @@ The app shell has four main regions:
 3. Workspace grid
    - Left: Parameter panel.
    - Middle: Pipeline step list and selected step detail.
-   - Right: Artifact panel and log panel.
+   - Right: Model preview panel, artifact panel, and log panel.
 
 4. Responsive behavior
    - Desktop: three columns.
@@ -164,6 +165,24 @@ When a step is selected, the detail panel shows:
 
 If no step state is available, the panel shows an empty state.
 
+## Model Preview Panel
+
+The model preview panel shows generated model artifacts that can be rendered in the browser.
+
+Supported preview inputs:
+
+- GLB artifacts with `artifact.url`.
+- OBJ artifacts with `artifact.url`.
+
+Behavior:
+
+- The panel selects the first previewable model artifact automatically.
+- A native select control switches between available GLB and OBJ artifacts.
+- A direct open link remains available for the selected artifact.
+- Three.js renders the selected artifact with orbit controls, lighting, grid reference, auto-rotation, and automatic camera framing.
+- OBJ files receive a neutral material fallback when no material is available.
+- If no previewable artifacts exist, the panel displays an empty state.
+
 ## Artifact Panel
 
 The artifact panel shows generated files returned by the API.
@@ -233,11 +252,13 @@ Logs are displayed in a monospace dark panel to preserve readability for technic
 | UI-AC-007 | Generated artifacts appear with file size and link after export. |
 | UI-AC-008 | The app builds successfully with `npm run build`. |
 | UI-AC-009 | Unit tests pass with `npm run test`. |
+| UI-AC-010 | Served GLB and OBJ artifacts can be selected and rendered in the model preview panel. |
 
 ## UI Maintenance Checklist
 
 - Update TypeScript interfaces when backend models change.
 - Update parameter handling if a new control type is introduced.
 - Update responsive CSS after adding new panels.
+- Update model preview loaders and artifact helper tests when supported preview formats change.
 - Keep command button enablement rules aligned with backend conflict rules.
 - Validate browser snapshot after major layout changes.

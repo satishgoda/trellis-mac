@@ -33,7 +33,8 @@ This matrix links requirements to design elements, implementation areas, verific
 | FR-010 | Artifact design | `trellis_workflow/exporter.py` | VAL-004 |
 | FR-011 | Artifact design | `export_mesh_outputs`, `_export_textured_glb` | Full integration validation |
 | FR-012 | Artifact panel design | `web/src/components/ArtifactPanel.tsx` | VAL-004; UI-AC-007 |
-| FR-013 | Command behavior | `App.resetSession` | UI manual validation |
+| FR-013 | Model preview design | `web/src/components/ModelPreview.tsx`, `web/src/lib/artifacts.ts` | Browser model preview smoke; UI-AC-010 |
+| FR-014 | Command behavior | `App.resetSession` | UI manual validation |
 | API-001 | API server design | `GET /api/health` | API smoke test |
 | API-002 | API server design | `GET /api/workflows/default` | API smoke test |
 | API-003 | API server design | `POST /api/sessions` | API smoke test; backend contract tests |
@@ -51,9 +52,10 @@ This matrix links requirements to design elements, implementation areas, verific
 | UI-005 | Step detail panel | `StepDetails` | Browser smoke test; VAL-003 |
 | UI-006 | Log panel | `LogPanel` | VAL-001, VAL-003 |
 | UI-007 | Artifact panel | `ArtifactPanel` | VAL-004 |
-| UI-008 | Polling behavior | `App.useEffect` polling timer | VAL-003 |
-| UI-009 | Error handling | `App` error banner | VAL-002, VAL-005 |
-| UI-010 | Responsive behavior | `web/src/styles.css` media queries | Browser viewport review |
+| UI-008 | Model preview panel | `ModelPreview`, `previewableModelArtifacts` | Browser model preview smoke; frontend unit tests |
+| UI-009 | Polling behavior | `App.useEffect` polling timer | VAL-003 |
+| UI-010 | Error handling | `App` error banner | VAL-002, VAL-005 |
+| UI-011 | Responsive behavior | `web/src/styles.css` media queries | Browser viewport review |
 | NFR-001 | Execution model | `ThreadPoolExecutor(max_workers=1)` | Code review |
 | NFR-002 | Maintainability decisions | `generate.py` unchanged path | Regression check |
 | NFR-003 | Typed contracts | Pydantic models, TypeScript interfaces | `pytest tests`, `npm run build` |

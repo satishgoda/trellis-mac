@@ -37,7 +37,8 @@
 | FR-010 | The system shall export generated model artifacts after decode. | Must | Export step writes GLB and OBJ files and exposes artifact metadata. |
 | FR-011 | The system shall support optional texture baking. | Must | Export uses texture backend unless geometry-only mode or texture backend `none` is selected. |
 | FR-012 | The system shall provide artifact links for generated outputs. | Should | UI displays artifact name, path, size, type, and URL where available. |
-| FR-013 | The system shall allow users to reset the UI view without deleting server state. | Could | Reset clears local session view and leaves API process unaffected. |
+| FR-013 | The system shall preview generated model artifacts in the browser. | Should | Served GLB and OBJ artifacts can be selected and rendered in the UI without leaving the workflow console. |
+| FR-014 | The system shall allow users to reset the UI view without deleting server state. | Could | Reset clears local session view and leaves API process unaffected. |
 
 ## API Requirements
 
@@ -65,9 +66,10 @@
 | UI-005 | The UI shall present selected step details. | Must | Details show description, status, started time, duration, summary, error, and metrics. |
 | UI-006 | The UI shall present logs. | Must | Logs show timestamp, step id or session, level, and message. |
 | UI-007 | The UI shall present generated artifacts. | Should | Artifacts panel shows generated files and opens URLs in a new browser tab. |
-| UI-008 | The UI shall poll active sessions while work is running. | Must | Polling occurs during `busy=true` and stops when the session is idle. |
-| UI-009 | The UI shall surface API errors to the user. | Must | Failed API calls display an error banner. |
-| UI-010 | The UI shall remain usable at desktop and tablet widths. | Should | Layout reflows using the documented responsive grid breakpoints. |
+| UI-008 | The UI shall preview served GLB and OBJ artifacts. | Should | Preview panel lists model artifacts, renders the selected file in a canvas, and keeps a direct open link. |
+| UI-009 | The UI shall poll active sessions while work is running. | Must | Polling occurs during `busy=true` and stops when the session is idle. |
+| UI-010 | The UI shall surface API errors to the user. | Must | Failed API calls display an error banner. |
+| UI-011 | The UI shall remain usable at desktop and tablet widths. | Should | Layout reflows using the documented responsive grid breakpoints. |
 
 ## Non-Functional Requirements
 
