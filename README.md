@@ -91,6 +91,8 @@ python generate.py --help
 
 This repo also includes a React + FastAPI workflow console for running the same generation pipeline one stage at a time. The backend keeps the loaded TRELLIS pipeline, conditioning tensors, latents, and decoded mesh in an in-memory session so each step can be inspected before continuing.
 
+![alt text](docs/trellis-mac-frontend/trellis-mac-frontend.jpeg)
+
 ```bash
 # Terminal 1: start the Python API
 source .venv/bin/activate
