@@ -105,7 +105,7 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Generated artifacts are written under `outputs/<session-id>/` and served by the API at `/outputs/...`.
+Open `http://127.0.0.1:5173`. Generated artifacts are written under the configured output directory and served by the API at `/api/artifacts/...`. The workflow console previews served `.glb` and `.obj` artifacts directly in the app with orbit controls, while still keeping download links in the artifact list.
 
 | Option | Default | Description |
 |--------|---------|-------------|
