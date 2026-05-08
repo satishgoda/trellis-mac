@@ -1,5 +1,6 @@
 .venv/
 __pycache__/
+.pytest_cache/
 *.pyc
 *.egg-info/
 TRELLIS.2/
@@ -11,3 +12,7 @@ stubs/
 progress-assets/
 PROGRESS.md
 deps/
+outputs/
+web/node_modules/
+web/dist/
+web/.vite/
